@@ -51,16 +51,17 @@ class rundeck::install(
     'Debian': {
       if $manage_repo == true {
         include apt
+        apt::key { 'bintray-rundeck-key':
+          id     => '8756C4F765C9AC3CB6B85D62379CE192D401AB61',
+          server => 'keyserver.ubuntu.com',
+        }
         apt::source { 'bintray-rundeck':
           location => 'https://dl.bintray.com/rundeck/rundeck-deb',
           release  => '/',
           repos    => '',
-          key      => {
-            id     => '8756C4F765C9AC3CB6B85D62379CE192D401AB61',
-            server => 'keyserver.ubuntu.com',
-          },
           before   => Package['rundeck'],
         }
+        Apt::Source['bintray-rundeck'] -> Apt::Key <| tag == 'bintray-rundeck-key' |>
       }
       ensure_packages(['rundeck'], {'ensure' => $package_ensure, notify => Class['rundeck::service'], require => Class['apt::update'] } )
     }
