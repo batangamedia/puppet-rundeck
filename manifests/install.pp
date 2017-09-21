@@ -59,8 +59,8 @@ class rundeck::install(
           location => 'https://dl.bintray.com/rundeck/rundeck-deb',
           release  => '/',
           repos    => '',
-          before   => Package['rundeck'],
         }
+        Apt::Source['bintray-rundeck'] -> Package <| tag == 'rundeck' |>
         Apt::Source['bintray-rundeck'] -> Apt::Key <| tag == 'bintray-rundeck-key' |>
       }
       ensure_packages(['rundeck'], {'ensure' => $package_ensure, notify => Class['rundeck::service'], require => Class['apt::update'] } )
